@@ -47,7 +47,7 @@ export function muiTheme(themes) {
         palette: {},
     }));
     const themesAppliedList = makeClone(themesInitList);
-    themesAppliedList[0] = themeApply(themesInitList[0], themesOverrideList[0]);
+    themesAppliedList[0] = themesOverrideList[0];
     const themesRenderedList = themeListRender(themesAppliedList);
 
 /** note: theme arrays description
@@ -86,10 +86,8 @@ export function muiTheme(themes) {
 
     const onThemeOverride = (themeInd) => {
         return (overTheme) => {
-            themesOverrideList[themeInd] = themeApply(themesOverrideList[themeInd], overTheme);
-            themesAppliedList[themeInd] = themeApply(
-              themesInitList[themeInd], themesOverrideList[themeInd],
-            );
+            themesOverrideList[themeInd] = overTheme;
+            themesAppliedList[themeInd] = themesOverrideList[themeInd];
             return themesAppliedList;
         };
     };
@@ -111,26 +109,6 @@ export function muiTheme(themes) {
             channel={channel}
           />);
     };
-}
-
-function themeApply(prevTheme, overTheme) {
-    const newTheme = makeClone(prevTheme);
-    const keys = Object.keys(overTheme);
-    keys.forEach((val) => {
-        if (typeof (overTheme[val]) === 'object') {
-            if (typeof (newTheme[val]) === 'undefined') {
-                newTheme[val] = {};
-            }
-
-            const subKeys = Object.keys(overTheme[val]);
-            // note: find out a number or a string
-            subKeys.forEach((prop) => { newTheme[val][prop] = tryParse(overTheme[val][prop]); });
-        } else {
-            newTheme[val] = overTheme[val];
-        }
-    });
-
-    return newTheme;
 }
 
 function themeListRender(themesAppliedList) {
